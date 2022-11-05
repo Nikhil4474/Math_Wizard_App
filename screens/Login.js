@@ -70,6 +70,32 @@ export default class Login extends React.Component {
               }}
               keyboardtype={'default'}
             />
+
+            <Text style={styles.label}>Email</Text>
+            <TextInput
+              style={styles.TextInput}
+              placeholder="Email"
+              placeholderTextColor="black"
+              onChangeText={(text) => {
+                this.setState({
+                  contact: text,
+                });
+              }}
+              keyboardtype={'email-address'}
+            />
+
+            <Text style={styles.label}>Phone Number</Text>
+            <TextInput
+              style={styles.TextInput}
+              placeholder="Phone Number"
+              placeholderTextColor="black"
+              onChangeText={(text) => {
+                this.setState({
+                  emailId: text,
+                });
+              }}
+              keyboardtype={'phone-pad'}
+            />
           </View>
         </ScrollView>
       </Modal>
