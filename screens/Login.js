@@ -10,9 +10,10 @@ import {
   Modal,
   ScrollView,
 } from 'react-native';
-// import firebase from 'firebase'
+import firebase from 'firebase';
 import db from '../config';
 import { RFValue } from 'react-native-responsive-fontsize';
+import { async } from '@firebase/util';
 
 export default class Login extends React.Component {
   constructor() {
@@ -30,6 +31,45 @@ export default class Login extends React.Component {
     };
   }
 
+  userSignUp = async (emailId, password, confirmPassword) => {
+    if (password !== confirmPassword) {
+      return alert('Passwords do not match!');
+    } else {
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(emailId, password)
+        .then(() => {
+          db.collection('users').add({
+            firsName: this.state.firstName,
+            lastName: this.state.lastName,
+            contact: this.state.contact,
+            address: this.state.address,
+            emailId: this.state.emailId,
+            password: this.state.password,
+          });
+          this.setState({
+            isModalVisible: false,
+          });
+          return alert('Successfully created an account');
+        })
+        .catch((error) => {
+          console.log(error.message);
+        });
+    }
+  };
+
+  userLogin = async (emailId, password) => {
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(emailId, password)
+      .then(() => {
+        this.props.navigation.navigate('bottomTab');
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
+  };
+
   showModal = () => {
     return (
       <Modal
@@ -39,15 +79,13 @@ export default class Login extends React.Component {
       >
         <ScrollView style={styles.scrollview}>
           <View style={styles.signupView}>
-            <Text style={[styles.signupText, { marginTop: RFValue(35) }]}>
-              Sign Up
-            </Text>
+            <Text style={styles.signupText}>Sign Up</Text>
           </View>
 
           <View style={{ flex: 0.95 }}>
             <Text style={styles.label}>First Name</Text>
             <TextInput
-              style={styles.TextInput}
+              style={styles.formInput}
               placeholder="First Name"
               placeholderTextColor="black"
               onChangeText={(text) => {
@@ -55,12 +93,12 @@ export default class Login extends React.Component {
                   firstName: text,
                 });
               }}
-              keyboardtype={'default'}
+              keyboardType={'default'}
             />
 
             <Text style={styles.label}>Last Name</Text>
             <TextInput
-              style={styles.TextInput}
+              style={styles.formInput}
               placeholder="Last Name"
               placeholderTextColor="black"
               onChangeText={(text) => {
@@ -68,12 +106,12 @@ export default class Login extends React.Component {
                   lastName: text,
                 });
               }}
-              keyboardtype={'default'}
+              keyboardType={'default'}
             />
 
             <Text style={styles.label}>Email</Text>
             <TextInput
-              style={styles.TextInput}
+              style={styles.formInput}
               placeholder="Email"
               placeholderTextColor="black"
               onChangeText={(text) => {
@@ -81,12 +119,26 @@ export default class Login extends React.Component {
                   contact: text,
                 });
               }}
-              keyboardtype={'email-address'}
+              keyboardType={'email-address'}
+            />
+
+            <Text style={styles.label}>Address</Text>
+            <TextInput
+              style={styles.formInput}
+              placeholder="Address"
+              placeholderTextColor="black"
+              multiLine={true}
+              onChangeText={(text) => {
+                this.setState({
+                  address: text,
+                });
+              }}
+              keyboardType={'default'}
             />
 
             <Text style={styles.label}>Phone Number</Text>
             <TextInput
-              style={styles.TextInput}
+              style={styles.formInput}
               placeholder="Phone Number"
               placeholderTextColor="black"
               onChangeText={(text) => {
@@ -94,8 +146,59 @@ export default class Login extends React.Component {
                   emailId: text,
                 });
               }}
-              keyboardtype={'phone-pad'}
+              keyboardType={'numeric'}
             />
+
+            <Text style={styles.label}>Password</Text>
+            <TextInput
+              style={styles.formInput}
+              placeholder="Password (max 10 characters)"
+              placeholderTextColor="black"
+              maxLength={10}
+              secureTextEntry={true}
+              onChangeText={(text) => {
+                this.setState({
+                  password: text,
+                });
+              }}
+              keyboardType={'default'}
+            />
+
+            <Text style={styles.label}>Confirm Password</Text>
+            <TextInput
+              style={styles.formInput}
+              placeholder="Confirm Password"
+              placeholderTextColor="black"
+              maxlength={10}
+              secureTextEntry={true}
+              onChangeText={(text) => {
+                this.setState({
+                  confirmPassword: text,
+                });
+              }}
+              keyboardType={'default'}
+            />
+
+            <View style={{ flex: 0.2, alignItems: 'center' }}>
+              <TouchableOpacity style={styles.registerButton}
+              onPress={()=>{
+                this.userSignUp(
+                this.state.emailId,
+                this.state.password,
+                this.state.confirmPassword
+              );
+              }}>
+                <Text style={styles.resisterButtonText}>Register</Text>
+              </TouchableOpacity>
+              <Text
+                style={styles.cancelButtonText}
+                onPress={() => {
+                  this.setState({ isModalVisible: false });
+                }}
+              >
+                Cancel
+              </Text>
+            </View>
           </View>
         </ScrollView>
       </Modal>
@@ -140,7 +243,7 @@ export default class Login extends React.Component {
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
-              this.props.navigation.navigate('bottomTab');
+              this.userLogin(this.state.emailId, this.state.password)
             }}
           >
             <Text style={styles.buttonText}>Log In</Text>
@@ -152,9 +255,10 @@ export default class Login extends React.Component {
               this.setState({
                 isModalVisible: true,
               });
+              
             }}
           >
-            <Text style={styles.buttonText}>Signup In</Text>
+            <Text style={styles.buttonText}>Sign up</Text>
           </TouchableOpacity>
         </View>
       </View>
