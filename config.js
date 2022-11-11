@@ -1,5 +1,5 @@
 import firebase from 'firebase'
-
+require("@firebase/firestore")
 const firebaseConfig = {
   apiKey: 'AIzaSyDJdM9tV2ev2YeqED1-gfnSrVHSrgw4zCU',
   authDomain: 'math-wizard-app.firebaseapp.com',
