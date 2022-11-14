@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import CamScanner from "../screens/CamScanner"
 import Search from '../screens/Search';
-import History from '../screens/History';
+import Profile from '../screens/Profile';
 import {Feather} from 'react-native-vector-icons'
 import { NavigationContainer } from '@react-navigation/native';
 
@@ -20,8 +20,8 @@ export default class BottomTabNavigator extends Component{
                 iconName = 'camera';
               } else if (route.name === 'Search') {
                 iconName = 'search';
-              } else if (route.name === 'History') {
-                iconName = 'list';
+              } else if (route.name === 'Profile') {
+                iconName = 'user';
               }
               return <Feather name={iconName} size={size} color={color} />;
             },
@@ -42,7 +42,7 @@ export default class BottomTabNavigator extends Component{
         >
           <Tab.Screen name="CamScanner" component={CamScanner} />
           <Tab.Screen name="Search" component={Search} />
-          <Tab.Screen name="History" component={History} />
+          <Tab.Screen name="Profile" component={Profile} />
         </Tab.Navigator>
       </NavigationContainer>
     );
