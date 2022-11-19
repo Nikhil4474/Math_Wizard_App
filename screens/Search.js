@@ -3,6 +3,6 @@ import { View, Text, TouchableOpacity, Alert, TextInput } from 'react-native';
 
 export default class Search extends React.Component {
   render() {
-    return <Text>Search Screen</Text>;
+    return <Text>This is the Search Screen</Text>;
   }
 }
